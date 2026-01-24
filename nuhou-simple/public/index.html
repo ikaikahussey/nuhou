@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nūhou - Hawaii News</title>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,600;0,700;1,400&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #fafaf8;
+      color: #1a1a1a;
+      line-height: 1.5;
+    }
+    
+    .header {
+      background: linear-gradient(135deg, #2d5a27 0%, #1e3d1a 100%);
+      color: white;
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    
+    .header h1 {
+      font-family: 'Newsreader', Georgia, serif;
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+    
+    .header-subtitle {
+      font-size: 0.85rem;
+      opacity: 0.9;
+      margin-top: 0.25rem;
+    }
+    
+    .nav {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+    }
+    
+    .nav button {
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: white;
+      padding: 0.4rem 0.8rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+    
+    .nav button:hover { background: rgba(255,255,255,0.25); }
+    .nav button.active { background: white; color: #2d5a27; font-weight: 600; }
+    
+    .search-box {
+      margin-top: 1rem;
+    }
+    
+    .search-box input {
+      width: 100%;
+      max-width: 400px;
+      padding: 0.6rem 1rem;
+      border: none;
+      border-radius: 4px;
+      font-size: 0.95rem;
+    }
+    
+    .main {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 2rem;
+    }
+    
+    @media (max-width: 900px) {
+      .main { grid-template-columns: 1fr; }
+    }
+    
+    .stories { display: flex; flex-direction: column; gap: 1.5rem; }
+    
+    .lead-story {
+      background: white;
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+    
+    .lead-story h2 {
+      font-family: 'Newsreader', Georgia, serif;
+      font-size: 1.6rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      line-height: 1.3;
+    }
+    
+    .lead-story h2 a {
+      color: #1a1a1a;
+      text-decoration: none;
+    }
+    
+    .lead-story h2 a:hover { color: #2d5a27; }
+    
+    .story-meta {
+      font-size: 0.85rem;
+      color: #666;
+      margin-bottom: 0.75rem;
+    }
+    
+    .story-description {
+      color: #444;
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+    }
+    
+    .related-coverage {
+      border-top: 1px solid #eee;
+      padding-top: 1rem;
+    }
+    
+    .related-coverage h4 {
+      font-size: 0.8rem;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+    }
+    
+    .related-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    
+    .related-item {
+      font-size: 0.9rem;
+    }
+    
+    .related-item a {
+      color: #2d5a27;
+      text-decoration: none;
+    }
+    
+    .related-item a:hover { text-decoration: underline; }
+    
+    .related-source {
+      color: #888;
+      font-size: 0.8rem;
+    }
+    
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    
+    .sidebar-section {
+      background: white;
+      border-radius: 8px;
+      padding: 1rem;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+    
+    .sidebar-section h3 {
+      font-family: 'Newsreader', Georgia, serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid #2d5a27;
+    }
+    
+    .social-item {
+      padding: 0.75rem 0;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .social-item:last-child { border-bottom: none; }
+    
+    .social-item a {
+      color: #1a1a1a;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+    
+    .social-item a:hover { color: #2d5a27; }
+    
+    .social-meta {
+      font-size: 0.75rem;
+      color: #888;
+      margin-top: 0.25rem;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 3rem;
+      color: #666;
+    }
+    
+    .error {
+      background: #fee;
+      color: #c00;
+      padding: 1rem;
+      border-radius: 8px;
+      margin: 1rem 0;
+    }
+    
+    .category-tag {
+      display: inline-block;
+      background: #e8f0e8;
+      color: #2d5a27;
+      padding: 0.2rem 0.5rem;
+      border-radius: 3px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-right: 0.5rem;
+    }
+    
+    .stats {
+      font-size: 0.8rem;
+      color: #888;
+      text-align: center;
+      padding: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  
+  <script type="text/babel">
+    const { useState, useEffect, useCallback } = React;
+    
+    const API_BASE = '/api';
+    
+    const CATEGORIES = [
+      { id: 'all', label: 'All News' },
+      { id: 'politics', label: 'Politics' },
+      { id: 'business', label: 'Business' },
+      { id: 'environment', label: 'Environment' },
+      { id: 'community', label: 'Community' },
+      { id: 'emergency', label: 'Emergency' }
+    ];
+    
+    function formatTime(dateString) {
+      const date = new Date(dateString);
+      const now = new Date();
+      const diff = now - date;
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor(diff / (1000 * 60));
+      
+      if (minutes < 60) return `${minutes}m ago`;
+      if (hours < 24) return `${hours}h ago`;
+      return date.toLocaleDateString();
+    }
+    
+    function StoryCluster({ cluster }) {
+      const lead = cluster.lead || cluster.articles?.[0];
+      const related = cluster.articles?.slice(1) || [];
+      
+      if (!lead) return null;
+      
+      return (
+        <article className="lead-story">
+          {lead.category && (
+            <span className="category-tag">{lead.category}</span>
+          )}
+          <h2>
+            <a href={lead.link} target="_blank" rel="noopener noreferrer">
+              {lead.title}
+            </a>
+          </h2>
+          <div className="story-meta">
+            <strong>{lead.source}</strong> • {formatTime(lead.pubDate)}
+          </div>
+          {lead.description && (
+            <p className="story-description">
+              {lead.description.slice(0, 250)}
+              {lead.description.length > 250 ? '...' : ''}
+            </p>
+          )}
+          {related.length > 0 && (
+            <div className="related-coverage">
+              <h4>Also covering ({related.length})</h4>
+              <div className="related-list">
+                {related.slice(0, 5).map((article, i) => (
+                  <div key={i} className="related-item">
+                    <a href={article.link} target="_blank" rel="noopener noreferrer">
+                      {article.title.slice(0, 80)}{article.title.length > 80 ? '...' : ''}
+                    </a>
+                    <span className="related-source"> — {article.source}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </article>
+      );
+    }
+    
+    function SocialSidebar({ social }) {
+      if (!social || social.length === 0) {
+        return (
+          <div className="sidebar-section">
+            <h3>Social</h3>
+            <p style={{color: '#888', fontSize: '0.9rem'}}>Loading social content...</p>
+          </div>
+        );
+      }
+      
+      return (
+        <div className="sidebar-section">
+          <h3>From Reddit</h3>
+          {social.slice(0, 8).map((item, i) => (
+            <div key={i} className="social-item">
+              <a href={item.link || item.url} target="_blank" rel="noopener noreferrer">
+                {item.title}
+              </a>
+              <div className="social-meta">
+                r/{item.subreddit} • {item.score} points • {item.numComments} comments
+              </div>
+            </div>
+          ))}
+        </div>
+      );
+    }
+    
+    function App() {
+      const [stories, setStories] = useState([]);
+      const [social, setSocial] = useState([]);
+      const [category, setCategory] = useState('all');
+      const [search, setSearch] = useState('');
+      const [loading, setLoading] = useState(true);
+      const [error, setError] = useState(null);
+      const [stats, setStats] = useState(null);
+      
+      const fetchStories = useCallback(async () => {
+        try {
+          setLoading(true);
+          setError(null);
+          
+          let url = `${API_BASE}/stories`;
+          const params = new URLSearchParams();
+          if (category !== 'all') params.set('category', category);
+          if (search) params.set('search', search);
+          if (params.toString()) url += `?${params}`;
+          
+          const res = await fetch(url);
+          if (!res.ok) throw new Error('Failed to fetch stories');
+          const data = await res.json();
+          setStories(data.clusters || data || []);
+        } catch (err) {
+          setError(err.message);
+        } finally {
+          setLoading(false);
+        }
+      }, [category, search]);
+      
+      const fetchSocial = useCallback(async () => {
+        try {
+          const res = await fetch(`${API_BASE}/social`);
+          if (res.ok) {
+            const data = await res.json();
+            setSocial(data.reddit || data || []);
+          }
+        } catch (err) {
+          console.error('Failed to fetch social:', err);
+        }
+      }, []);
+      
+      const fetchStats = useCallback(async () => {
+        try {
+          const res = await fetch(`${API_BASE}/stats`);
+          if (res.ok) {
+            const data = await res.json();
+            setStats(data);
+          }
+        } catch (err) {
+          console.error('Failed to fetch stats:', err);
+        }
+      }, []);
+      
+      useEffect(() => {
+        fetchStories();
+      }, [fetchStories]);
+      
+      useEffect(() => {
+        fetchSocial();
+        fetchStats();
+        const interval = setInterval(() => {
+          fetchSocial();
+          fetchStats();
+        }, 60000);
+        return () => clearInterval(interval);
+      }, [fetchSocial, fetchStats]);
+      
+      const handleSearch = (e) => {
+        e.preventDefault();
+        fetchStories();
+      };
+      
+      return (
+        <div>
+          <header className="header">
+            <h1>Nūhou</h1>
+            <div className="header-subtitle">Hawaii News Aggregator</div>
+            
+            <nav className="nav">
+              {CATEGORIES.map(cat => (
+                <button
+                  key={cat.id}
+                  className={category === cat.id ? 'active' : ''}
+                  onClick={() => setCategory(cat.id)}
+                >
+                  {cat.label}
+                </button>
+              ))}
+            </nav>
+            
+            <form className="search-box" onSubmit={handleSearch}>
+              <input
+                type="text"
+                placeholder="Search Hawaii news..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </form>
+          </header>
+          
+          <main className="main">
+            <div className="stories">
+              {loading && <div className="loading">Loading stories...</div>}
+              {error && <div className="error">{error}</div>}
+              {!loading && !error && stories.length === 0 && (
+                <div className="loading">No stories found. Feeds are being fetched...</div>
+              )}
+              {stories.map((cluster, i) => (
+                <StoryCluster key={i} cluster={cluster} />
+              ))}
+            </div>
+            
+            <aside className="sidebar">
+              <SocialSidebar social={social} />
+              {stats && (
+                <div className="stats">
+                  {stats.articleCount || 0} articles from {stats.sourceCount || 0} sources
+                  <br />
+                  Last updated: {stats.lastRefresh ? formatTime(stats.lastRefresh) : 'Never'}
+                </div>
+              )}
+            </aside>
+          </main>
+        </div>
+      );
+    }
+    
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
