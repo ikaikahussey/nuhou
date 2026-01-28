@@ -9,179 +9,222 @@
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,600;0,700;1,400&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Charter:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     
     body {
-      font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: #fafaf8;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f5f5f0;
       color: #1a1a1a;
       line-height: 1.5;
+      font-size: 14px;
     }
     
     .header {
-      background: linear-gradient(135deg, #2d5a27 0%, #1e3d1a 100%);
+      background: #2d5016;
       color: white;
-      padding: 1rem 2rem;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      padding: 0.75rem 1.5rem;
+      border-bottom: 3px solid #1a3009;
+    }
+    
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
     }
     
     .header h1 {
-      font-family: 'Newsreader', Georgia, serif;
-      font-size: 2rem;
+      font-family: 'Charter', Georgia, serif;
+      font-size: 1.75rem;
       font-weight: 700;
-      letter-spacing: 0.02em;
+      letter-spacing: -0.02em;
     }
     
-    .header-subtitle {
-      font-size: 0.85rem;
-      opacity: 0.9;
-      margin-top: 0.25rem;
+    .header h1 span {
+      font-weight: 400;
+      font-size: 0.9rem;
+      opacity: 0.8;
+      margin-left: 0.5rem;
     }
     
     .nav {
       display: flex;
-      gap: 0.5rem;
-      margin-top: 1rem;
+      gap: 0.25rem;
       flex-wrap: wrap;
     }
     
     .nav button {
-      background: rgba(255,255,255,0.15);
-      border: 1px solid rgba(255,255,255,0.3);
-      color: white;
-      padding: 0.4rem 0.8rem;
-      border-radius: 4px;
+      background: transparent;
+      border: none;
+      color: rgba(255,255,255,0.8);
+      padding: 0.35rem 0.7rem;
+      border-radius: 3px;
       cursor: pointer;
-      font-size: 0.85rem;
-      transition: all 0.2s;
+      font-size: 0.8rem;
+      font-weight: 500;
+      transition: all 0.15s;
     }
     
-    .nav button:hover { background: rgba(255,255,255,0.25); }
-    .nav button.active { background: white; color: #2d5a27; font-weight: 600; }
-    
-    .search-box {
-      margin-top: 1rem;
-    }
+    .nav button:hover { background: rgba(255,255,255,0.15); color: white; }
+    .nav button.active { background: rgba(255,255,255,0.95); color: #2d5016; }
     
     .search-box input {
-      width: 100%;
-      max-width: 400px;
-      padding: 0.6rem 1rem;
+      padding: 0.4rem 0.75rem;
       border: none;
-      border-radius: 4px;
-      font-size: 0.95rem;
+      border-radius: 3px;
+      font-size: 0.85rem;
+      width: 200px;
     }
     
     .main {
-      max-width: 1400px;
+      max-width: 1200px;
       margin: 0 auto;
-      padding: 2rem;
+      padding: 1.5rem;
       display: grid;
-      grid-template-columns: 1fr 300px;
+      grid-template-columns: 1fr 280px;
       gap: 2rem;
     }
     
     @media (max-width: 900px) {
-      .main { grid-template-columns: 1fr; }
+      .main { grid-template-columns: 1fr; padding: 1rem; }
     }
     
-    .stories { display: flex; flex-direction: column; gap: 1.5rem; }
+    .stories { display: flex; flex-direction: column; gap: 0; }
     
-    .lead-story {
+    /* Techmeme-style story cluster */
+    .story-cluster {
       background: white;
-      border-radius: 8px;
-      padding: 1.5rem;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      border-bottom: 1px solid #ddd;
+      padding: 1rem 1.25rem;
     }
     
-    .lead-story h2 {
-      font-family: 'Newsreader', Georgia, serif;
-      font-size: 1.6rem;
-      font-weight: 600;
-      margin-bottom: 0.75rem;
-      line-height: 1.3;
+    .story-cluster:first-child {
+      border-top-left-radius: 4px;
+      border-top-right-radius: 4px;
     }
     
-    .lead-story h2 a {
+    .story-cluster:last-child {
+      border-bottom-left-radius: 4px;
+      border-bottom: none;
+    }
+    
+    .story-cluster.multi-source {
+      background: #fffff8;
+      border-left: 3px solid #2d5016;
+    }
+    
+    .lead-headline {
+      font-family: 'Charter', Georgia, serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      line-height: 1.35;
+      margin-bottom: 0.35rem;
+    }
+    
+    .lead-headline a {
       color: #1a1a1a;
       text-decoration: none;
     }
     
-    .lead-story h2 a:hover { color: #2d5a27; }
+    .lead-headline a:hover { color: #2d5016; }
     
-    .story-meta {
-      font-size: 0.85rem;
-      color: #666;
-      margin-bottom: 0.75rem;
-    }
-    
-    .story-description {
-      color: #444;
-      font-size: 0.95rem;
-      margin-bottom: 1rem;
-    }
-    
-    .related-coverage {
-      border-top: 1px solid #eee;
-      padding-top: 1rem;
-    }
-    
-    .related-coverage h4 {
+    .lead-meta {
       font-size: 0.8rem;
-      color: #888;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+      color: #666;
       margin-bottom: 0.5rem;
     }
     
-    .related-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0.4rem;
+    .lead-meta .source {
+      color: #2d5016;
+      font-weight: 600;
+    }
+    
+    .lead-summary {
+      color: #444;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      margin-bottom: 0.75rem;
+    }
+    
+    /* Related coverage - Techmeme style */
+    .related-coverage {
+      margin-top: 0.5rem;
+      padding-left: 0.75rem;
+      border-left: 2px solid #e0e0e0;
     }
     
     .related-item {
-      font-size: 0.9rem;
+      padding: 0.25rem 0;
+      font-size: 0.85rem;
+      line-height: 1.4;
     }
     
     .related-item a {
-      color: #2d5a27;
+      color: #2d5016;
       text-decoration: none;
+      font-weight: 500;
     }
     
     .related-item a:hover { text-decoration: underline; }
     
-    .related-source {
+    .related-item .source {
       color: #888;
+      font-weight: 400;
       font-size: 0.8rem;
     }
     
+    .source-count {
+      font-size: 0.75rem;
+      color: #888;
+      margin-bottom: 0.35rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    
+    .category-badge {
+      display: inline-block;
+      background: #e8f0e8;
+      color: #2d5016;
+      padding: 0.15rem 0.4rem;
+      border-radius: 2px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      margin-right: 0.5rem;
+    }
+    
+    /* Sidebar */
     .sidebar {
       display: flex;
       flex-direction: column;
-      gap: 1.5rem;
+      gap: 1rem;
     }
     
     .sidebar-section {
       background: white;
-      border-radius: 8px;
+      border-radius: 4px;
       padding: 1rem;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      border: 1px solid #ddd;
     }
     
     .sidebar-section h3 {
-      font-family: 'Newsreader', Georgia, serif;
-      font-size: 1.1rem;
-      font-weight: 600;
-      margin-bottom: 1rem;
+      font-family: 'Charter', Georgia, serif;
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
       padding-bottom: 0.5rem;
-      border-bottom: 2px solid #2d5a27;
+      border-bottom: 2px solid #2d5016;
+      color: #1a1a1a;
     }
     
     .social-item {
-      padding: 0.75rem 0;
+      padding: 0.5rem 0;
       border-bottom: 1px solid #eee;
     }
     
@@ -190,48 +233,41 @@
     .social-item a {
       color: #1a1a1a;
       text-decoration: none;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
+      line-height: 1.4;
+      display: block;
     }
     
-    .social-item a:hover { color: #2d5a27; }
+    .social-item a:hover { color: #2d5016; }
     
     .social-meta {
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       color: #888;
-      margin-top: 0.25rem;
+      margin-top: 0.2rem;
     }
     
     .loading {
       text-align: center;
       padding: 3rem;
       color: #666;
+      background: white;
+      border-radius: 4px;
     }
     
     .error {
       background: #fee;
       color: #c00;
       padding: 1rem;
-      border-radius: 8px;
-      margin: 1rem 0;
+      border-radius: 4px;
     }
     
-    .category-tag {
-      display: inline-block;
-      background: #e8f0e8;
-      color: #2d5a27;
-      padding: 0.2rem 0.5rem;
-      border-radius: 3px;
+    .stats-box {
       font-size: 0.75rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      margin-right: 0.5rem;
-    }
-    
-    .stats {
-      font-size: 0.8rem;
-      color: #888;
+      color: #666;
       text-align: center;
-      padding: 1rem;
+      padding: 0.75rem;
+      background: #f8f8f5;
+      border-radius: 4px;
     }
   </style>
 </head>
@@ -244,64 +280,93 @@
     const API_BASE = '/api';
     
     const CATEGORIES = [
-      { id: 'all', label: 'All News' },
+      { id: 'all', label: 'All' },
       { id: 'politics', label: 'Politics' },
       { id: 'business', label: 'Business' },
       { id: 'environment', label: 'Environment' },
       { id: 'community', label: 'Community' },
-      { id: 'emergency', label: 'Emergency' }
+      { id: 'emergency', label: 'Breaking' }
     ];
     
     function formatTime(dateString) {
+      if (!dateString) return '';
       const date = new Date(dateString);
+      if (isNaN(date.getTime())) return '';
+      
       const now = new Date();
       const diff = now - date;
-      const hours = Math.floor(diff / (1000 * 60 * 60));
       const minutes = Math.floor(diff / (1000 * 60));
+      const hours = Math.floor(diff / (1000 * 60 * 60));
       
-      if (minutes < 60) return `${minutes}m ago`;
-      if (hours < 24) return `${hours}h ago`;
-      return date.toLocaleDateString();
+      if (minutes < 1) return 'just now';
+      if (minutes < 60) return `${minutes}m`;
+      if (hours < 24) return `${hours}h`;
+      if (hours < 48) return 'yesterday';
+      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     }
     
-    function StoryCluster({ cluster }) {
-      const lead = cluster.lead || cluster.articles?.[0];
-      const related = cluster.articles?.slice(1) || [];
+    function getSourceName(source) {
+      if (!source) return 'Unknown';
+      if (typeof source === 'string') return source;
+      return source.shortName || source.name || source.id || 'Unknown';
+    }
+    
+    function getArticleDate(article) {
+      return article.publishedAt || article.pubDate || article.date;
+    }
+    
+    function getArticleLink(article) {
+      return article.link || article.url;
+    }
+    
+    function StoryCluster({ story }) {
+      const lead = story.lead;
+      const related = story.related || [];
+      const isMultiSource = story.articleCount > 1;
       
       if (!lead) return null;
       
       return (
-        <article className="lead-story">
+        <article className={`story-cluster ${isMultiSource ? 'multi-source' : ''}`}>
           {lead.category && (
-            <span className="category-tag">{lead.category}</span>
+            <span className="category-badge">{lead.category}</span>
           )}
-          <h2>
-            <a href={lead.link} target="_blank" rel="noopener noreferrer">
+          
+          <h2 className="lead-headline">
+            <a href={getArticleLink(lead)} target="_blank" rel="noopener noreferrer">
               {lead.title}
             </a>
           </h2>
-          <div className="story-meta">
-            <strong>{lead.source}</strong> • {formatTime(lead.pubDate)}
+          
+          <div className="lead-meta">
+            <span className="source">{getSourceName(lead.source)}</span>
+            {' · '}
+            <span>{formatTime(getArticleDate(lead))}</span>
           </div>
-          {lead.description && (
-            <p className="story-description">
-              {lead.description.slice(0, 250)}
-              {lead.description.length > 250 ? '...' : ''}
+          
+          {lead.summary && (
+            <p className="lead-summary">
+              {lead.summary.length > 200 ? lead.summary.slice(0, 200) + '...' : lead.summary}
             </p>
           )}
+          
           {related.length > 0 && (
             <div className="related-coverage">
-              <h4>Also covering ({related.length})</h4>
-              <div className="related-list">
-                {related.slice(0, 5).map((article, i) => (
-                  <div key={i} className="related-item">
-                    <a href={article.link} target="_blank" rel="noopener noreferrer">
-                      {article.title.slice(0, 80)}{article.title.length > 80 ? '...' : ''}
-                    </a>
-                    <span className="related-source"> — {article.source}</span>
-                  </div>
-                ))}
-              </div>
+              <div className="source-count">{related.length} more source{related.length > 1 ? 's' : ''}</div>
+              {related.slice(0, 5).map((article, i) => (
+                <div key={i} className="related-item">
+                  <a href={getArticleLink(article)} target="_blank" rel="noopener noreferrer">
+                    {article.title.length > 70 ? article.title.slice(0, 70) + '...' : article.title}
+                  </a>
+                  {' '}
+                  <span className="source">— {getSourceName(article.source)}</span>
+                </div>
+              ))}
+              {related.length > 5 && (
+                <div className="related-item" style={{color: '#888', fontStyle: 'italic'}}>
+                  +{related.length - 5} more...
+                </div>
+              )}
             </div>
           )}
         </article>
@@ -309,25 +374,27 @@
     }
     
     function SocialSidebar({ social }) {
-      if (!social || social.length === 0) {
+      const posts = social?.reddit || social || [];
+      
+      if (!posts || posts.length === 0) {
         return (
           <div className="sidebar-section">
-            <h3>Social</h3>
-            <p style={{color: '#888', fontSize: '0.9rem'}}>Loading social content...</p>
+            <h3>Discussion</h3>
+            <p style={{color: '#888', fontSize: '0.85rem'}}>Loading...</p>
           </div>
         );
       }
       
       return (
         <div className="sidebar-section">
-          <h3>From Reddit</h3>
-          {social.slice(0, 8).map((item, i) => (
+          <h3>r/Hawaii Discussion</h3>
+          {posts.slice(0, 8).map((item, i) => (
             <div key={i} className="social-item">
               <a href={item.link || item.url} target="_blank" rel="noopener noreferrer">
                 {item.title}
               </a>
               <div className="social-meta">
-                r/{item.subreddit} • {item.score} points • {item.numComments} comments
+                {item.score} pts · {item.numComments} comments
               </div>
             </div>
           ))}
@@ -337,9 +404,10 @@
     
     function App() {
       const [stories, setStories] = useState([]);
-      const [social, setSocial] = useState([]);
+      const [social, setSocial] = useState(null);
       const [category, setCategory] = useState('all');
       const [search, setSearch] = useState('');
+      const [searchInput, setSearchInput] = useState('');
       const [loading, setLoading] = useState(true);
       const [error, setError] = useState(null);
       const [stats, setStats] = useState(null);
@@ -349,17 +417,24 @@
           setLoading(true);
           setError(null);
           
-          let url = `${API_BASE}/stories`;
-          const params = new URLSearchParams();
-          if (category !== 'all') params.set('category', category);
-          if (search) params.set('search', search);
-          if (params.toString()) url += `?${params}`;
+          let url;
+          if (search) {
+            url = `${API_BASE}/search?q=${encodeURIComponent(search)}`;
+            if (category !== 'all') url += `&category=${category}`;
+          } else {
+            url = `${API_BASE}/stories`;
+            if (category !== 'all') url += `?category=${category}`;
+          }
           
           const res = await fetch(url);
           if (!res.ok) throw new Error('Failed to fetch stories');
           const data = await res.json();
-          setStories(data.clusters || data || []);
+          
+          // Handle both /stories and /search response formats
+          const storyList = data.stories || data.results || [];
+          setStories(storyList);
         } catch (err) {
+          console.error('Fetch error:', err);
           setError(err.message);
         } finally {
           setLoading(false);
@@ -371,10 +446,10 @@
           const res = await fetch(`${API_BASE}/social`);
           if (res.ok) {
             const data = await res.json();
-            setSocial(data.reddit || data || []);
+            setSocial(data);
           }
         } catch (err) {
-          console.error('Failed to fetch social:', err);
+          console.error('Social fetch error:', err);
         }
       }, []);
       
@@ -386,7 +461,7 @@
             setStats(data);
           }
         } catch (err) {
-          console.error('Failed to fetch stats:', err);
+          console.error('Stats fetch error:', err);
         }
       }, []);
       
@@ -398,66 +473,82 @@
         fetchSocial();
         fetchStats();
         const interval = setInterval(() => {
+          fetchStories();
           fetchSocial();
-          fetchStats();
         }, 60000);
         return () => clearInterval(interval);
       }, [fetchSocial, fetchStats]);
       
       const handleSearch = (e) => {
         e.preventDefault();
-        fetchStories();
+        setSearch(searchInput);
       };
+      
+      const multiSourceCount = stories.filter(s => s.articleCount > 1).length;
       
       return (
         <div>
           <header className="header">
-            <h1>Nūhou</h1>
-            <div className="header-subtitle">Hawaii News Aggregator</div>
-            
-            <nav className="nav">
-              {CATEGORIES.map(cat => (
-                <button
-                  key={cat.id}
-                  className={category === cat.id ? 'active' : ''}
-                  onClick={() => setCategory(cat.id)}
-                >
-                  {cat.label}
-                </button>
-              ))}
-            </nav>
-            
-            <form className="search-box" onSubmit={handleSearch}>
-              <input
-                type="text"
-                placeholder="Search Hawaii news..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-            </form>
+            <div className="header-inner">
+              <h1>
+                Nūhou
+                <span>Hawaii News</span>
+              </h1>
+              
+              <nav className="nav">
+                {CATEGORIES.map(cat => (
+                  <button
+                    key={cat.id}
+                    className={category === cat.id ? 'active' : ''}
+                    onClick={() => { setCategory(cat.id); setSearch(''); setSearchInput(''); }}
+                  >
+                    {cat.label}
+                  </button>
+                ))}
+              </nav>
+              
+              <form className="search-box" onSubmit={handleSearch}>
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
+                />
+              </form>
+            </div>
           </header>
           
           <main className="main">
             <div className="stories">
-              {loading && <div className="loading">Loading stories...</div>}
-              {error && <div className="error">{error}</div>}
+              {loading && <div className="loading">Loading Hawaii news...</div>}
+              {error && <div className="error">Error: {error}</div>}
               {!loading && !error && stories.length === 0 && (
-                <div className="loading">No stories found. Feeds are being fetched...</div>
+                <div className="loading">No stories found. Try a different search or category.</div>
               )}
-              {stories.map((cluster, i) => (
-                <StoryCluster key={i} cluster={cluster} />
+              {stories.map((story, i) => (
+                <StoryCluster key={story.id || i} story={story} />
               ))}
             </div>
             
             <aside className="sidebar">
+              <div className="stats-box">
+                {stats ? (
+                  <>
+                    <strong>{stats.articles?.total || 0}</strong> articles from{' '}
+                    <strong>{Object.keys(stats.articles?.bySource || {}).length}</strong> sources
+                    <br />
+                    <strong>{stats.clusters?.multiSource || multiSourceCount}</strong> multi-source stories
+                    <br />
+                    <span style={{fontSize: '0.7rem', color: '#999'}}>
+                      Updated {formatTime(stats.lastRefresh)}
+                    </span>
+                  </>
+                ) : (
+                  'Loading stats...'
+                )}
+              </div>
+              
               <SocialSidebar social={social} />
-              {stats && (
-                <div className="stats">
-                  {stats.articleCount || 0} articles from {stats.sourceCount || 0} sources
-                  <br />
-                  Last updated: {stats.lastRefresh ? formatTime(stats.lastRefresh) : 'Never'}
-                </div>
-              )}
             </aside>
           </main>
         </div>

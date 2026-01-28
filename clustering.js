@@ -1,8 +1,48 @@
-import natural from 'natural';
+// Simple tokenizer - no external dependencies
+function tokenize(text) {
+  if (!text) return [];
+  return text.toLowerCase()
+    .replace(/[^\w\s]/g, ' ')
+    .split(/\s+/)
+    .filter(t => t.length > 0);
+}
 
-const TfIdf = natural.TfIdf;
-const tokenizer = new natural.WordTokenizer();
-const stemmer = natural.PorterStemmer;
+// Simple Porter Stemmer implementation
+function stem(word) {
+  word = word.toLowerCase();
+  
+  // Step 1a
+  if (word.endsWith('sses')) word = word.slice(0, -2);
+  else if (word.endsWith('ies')) word = word.slice(0, -2);
+  else if (word.endsWith('ss')) { /* keep */ }
+  else if (word.endsWith('s')) word = word.slice(0, -1);
+  
+  // Step 1b
+  if (word.endsWith('eed')) {
+    if (word.length > 4) word = word.slice(0, -1);
+  } else if (word.endsWith('ed') && word.length > 4) {
+    word = word.slice(0, -2);
+  } else if (word.endsWith('ing') && word.length > 5) {
+    word = word.slice(0, -3);
+  }
+  
+  // Step 2 - common suffixes
+  const step2Suffixes = [
+    ['ational', 'ate'], ['tional', 'tion'], ['enci', 'ence'], ['anci', 'ance'],
+    ['izer', 'ize'], ['isation', 'ise'], ['ization', 'ize'], ['ation', 'ate'],
+    ['ator', 'ate'], ['alism', 'al'], ['iveness', 'ive'], ['fulness', 'ful'],
+    ['ousness', 'ous'], ['aliti', 'al'], ['iviti', 'ive'], ['biliti', 'ble']
+  ];
+  
+  for (const [suffix, replacement] of step2Suffixes) {
+    if (word.endsWith(suffix) && word.length > suffix.length + 2) {
+      word = word.slice(0, -suffix.length) + replacement;
+      break;
+    }
+  }
+  
+  return word;
+}
 
 // Stopwords for better TF-IDF
 const stopwords = new Set([
@@ -24,10 +64,10 @@ const stopwords = new Set([
 function preprocessText(text) {
   if (!text) return [];
   
-  const tokens = tokenizer.tokenize(text.toLowerCase());
+  const tokens = tokenize(text);
   return tokens
     .filter(token => token.length > 2 && !stopwords.has(token))
-    .map(token => stemmer.stem(token));
+    .map(token => stem(token));
 }
 
 // Calculate Jaccard similarity between two sets
