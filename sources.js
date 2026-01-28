@@ -181,6 +181,66 @@ export const sources = [
     type: 'institutional',
     region: 'statewide',
     priority: 3
+  },
+  {
+    id: 'reddit-hawaii',
+    name: 'Reddit r/Hawaii',
+    shortName: 'r/Hawaii',
+    url: 'https://www.reddit.com/r/Hawaii',
+    feedUrls: [
+      'https://www.reddit.com/r/Hawaii/.rss'
+    ],
+    type: 'social',
+    region: 'statewide',
+    priority: 2
+  },
+  {
+    id: 'reddit-honolulu',
+    name: 'Reddit r/Honolulu',
+    shortName: 'r/Honolulu',
+    url: 'https://www.reddit.com/r/Honolulu',
+    feedUrls: [
+      'https://www.reddit.com/r/Honolulu/.rss'
+    ],
+    type: 'social',
+    region: 'oahu',
+    priority: 3
+  },
+  {
+    id: 'reddit-maui',
+    name: 'Reddit r/Maui',
+    shortName: 'r/Maui',
+    url: 'https://www.reddit.com/r/maui',
+    feedUrls: [
+      'https://www.reddit.com/r/maui/.rss'
+    ],
+    type: 'social',
+    region: 'maui',
+    priority: 3
+  },
+  {
+    id: 'reddit-bigisland',
+    name: 'Reddit r/BigIsland',
+    shortName: 'r/BigIsland',
+    url: 'https://www.reddit.com/r/BigIsland',
+    feedUrls: [
+      'https://www.reddit.com/r/BigIsland/.rss'
+    ],
+    type: 'social',
+    region: 'big-island',
+    priority: 3
+  },
+  {
+    id: 'reddit-kauai',
+    name: 'Reddit r/Kauai',
+    shortName: 'r/Kauai',
+    url: 'https://www.reddit.com/r/kauai',
+    feedUrls: [
+      'https://www.reddit.com/r/kauai/.rss'
+    ],
+    type: 'social',
+    region: 'kauai',
+    priority: 3
   }
 ];
 

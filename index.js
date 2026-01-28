@@ -4,10 +4,9 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { fetchAllFeeds } from './feedParser.js';
 import { clusterArticles, getTopStories, filterByCategory } from './clustering.js';
-import { fetchSocialContent, getTrendingTopics, filterNewsRelevant } from './socialAggregator.js';
 import { searchIndex, searchStoryClusters } from './search.js';
 import { dataStore } from './cache.js';
-import { sources, socialSources, categoryKeywords } from './sources.js';
+import { sources, categoryKeywords } from './sources.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -89,34 +88,12 @@ async function refreshFeeds() {
   }
 }
 
-async function refreshSocial() {
-  console.log('Starting social media refresh...');
-  
-  try {
-    const twitterCredentials = process.env.TWITTER_BEARER_TOKEN ? {
-      bearerToken: process.env.TWITTER_BEARER_TOKEN
-    } : null;
-    
-    const social = await fetchSocialContent(twitterCredentials);
-    await dataStore.setSocial(social);
-    
-    const trending = getTrendingTopics(social);
-    await dataStore.setTrending(trending);
-    
-    console.log(`Social refresh complete. ${social.twitter.length} tweets, ${social.reddit.length} Reddit posts`);
-  } catch (error) {
-    console.error('Social refresh error:', error);
-  }
-}
-
 // Initial load
 console.log('Performing initial data load...');
 await refreshFeeds();
-await refreshSocial();
 
 // Schedule periodic refreshes
 setInterval(refreshFeeds, 5 * 60 * 1000);  // Every 5 minutes
-setInterval(refreshSocial, 3 * 60 * 1000); // Every 3 minutes
 
 // ============================================
 // API Routes
@@ -135,22 +112,46 @@ app.get('/api/health', (req, res) => {
 // Get top stories (clustered)
 app.get('/api/stories', async (req, res) => {
   try {
-    const { category, limit = 30 } = req.query;
+    const { category, tag, limit = 30 } = req.query;
     
     let clusters = await dataStore.getClusters();
+    const tagOverrides = await dataStore.getTagOverrides();
     
-    if (category && category !== 'all') {
+    // Apply tag overrides to clusters
+    clusters = clusters.map(cluster => {
+      const override = tagOverrides[cluster.id];
+      if (override) {
+        return { ...cluster, tag: override.tag, tagOverride: true };
+      }
+      // Use category as default tag if no override
+      return { ...cluster, tag: cluster.category || 'general' };
+    });
+    
+    // Filter by tag if specified
+    if (tag && tag !== 'all') {
+      clusters = clusters.filter(c => c.tag === tag);
+    } else if (category && category !== 'all') {
       clusters = filterByCategory(clusters, category);
     }
     
     const topStories = getTopStories(clusters, parseInt(limit));
     
+    // Get all unique tags
+    const allClusters = await dataStore.getClusters();
+    const allTags = new Set(['all']);
+    allClusters.forEach(c => {
+      const override = tagOverrides[c.id];
+      allTags.add(override ? override.tag : (c.category || 'general'));
+    });
+    
     res.json({
       stories: topStories,
+      tags: Array.from(allTags).sort(),
       meta: {
         total: clusters.length,
         returned: topStories.length,
         category: category || 'all',
+        tag: tag || 'all',
         lastUpdated: lastRefresh
       }
     });
@@ -247,51 +248,90 @@ app.get('/api/search/suggest', async (req, res) => {
   }
 });
 
-// Get social content
-app.get('/api/social', async (req, res) => {
+// ============================================
+// Tag Management
+// ============================================
+
+// Get all tags
+app.get('/api/tags', async (req, res) => {
   try {
-    const { platform, limit = 30, newsOnly = false } = req.query;
+    const clusters = await dataStore.getClusters();
+    const tagOverrides = await dataStore.getTagOverrides();
     
-    let social = await dataStore.getSocial();
+    // Collect all tags (from categories and overrides)
+    const tagCounts = {};
     
-    if (newsOnly === 'true') {
-      social = filterNewsRelevant(social);
-    }
-    
-    let result = {};
-    
-    if (!platform || platform === 'all') {
-      result = {
-        twitter: social.twitter.slice(0, parseInt(limit)),
-        reddit: social.reddit.slice(0, parseInt(limit))
-      };
-    } else if (platform === 'twitter') {
-      result = { twitter: social.twitter.slice(0, parseInt(limit)) };
-    } else if (platform === 'reddit') {
-      result = { reddit: social.reddit.slice(0, parseInt(limit)) };
-    }
-    
-    res.json({
-      ...result,
-      meta: {
-        fetchedAt: social.fetchedAt,
-        platform: platform || 'all'
-      }
+    clusters.forEach(cluster => {
+      const override = tagOverrides[cluster.id];
+      const tag = override ? override.tag : (cluster.category || 'general');
+      tagCounts[tag] = (tagCounts[tag] || 0) + 1;
     });
+    
+    const tags = Object.entries(tagCounts)
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count);
+    
+    res.json({ tags });
   } catch (error) {
-    console.error('Error fetching social:', error);
-    res.status(500).json({ error: 'Failed to fetch social content' });
+    console.error('Error fetching tags:', error);
+    res.status(500).json({ error: 'Failed to fetch tags' });
   }
 });
 
-// Get trending topics
-app.get('/api/trending', async (req, res) => {
+// Update tag for a story
+app.put('/api/stories/:storyId/tag', async (req, res) => {
   try {
-    const trending = await dataStore.getTrending();
-    res.json({ trending });
+    const { storyId } = req.params;
+    const { tag } = req.body;
+    
+    if (!tag || typeof tag !== 'string') {
+      return res.status(400).json({ error: 'Tag is required' });
+    }
+    
+    // Validate tag (alphanumeric, lowercase, hyphens allowed)
+    const cleanTag = tag.toLowerCase().trim().replace(/[^a-z0-9-]/g, '-');
+    
+    if (cleanTag.length < 2 || cleanTag.length > 30) {
+      return res.status(400).json({ error: 'Tag must be 2-30 characters' });
+    }
+    
+    // Verify story exists
+    const clusters = await dataStore.getClusters();
+    const cluster = clusters.find(c => c.id === storyId);
+    
+    if (!cluster) {
+      return res.status(404).json({ error: 'Story not found' });
+    }
+    
+    await dataStore.setTagOverride(storyId, cleanTag);
+    
+    res.json({
+      success: true,
+      storyId,
+      tag: cleanTag,
+      message: `Story tagged as "${cleanTag}"`
+    });
   } catch (error) {
-    console.error('Error fetching trending:', error);
-    res.status(500).json({ error: 'Failed to fetch trending' });
+    console.error('Error updating tag:', error);
+    res.status(500).json({ error: 'Failed to update tag' });
+  }
+});
+
+// Remove tag override (revert to auto-detected category)
+app.delete('/api/stories/:storyId/tag', async (req, res) => {
+  try {
+    const { storyId } = req.params;
+    
+    await dataStore.removeTagOverride(storyId);
+    
+    res.json({
+      success: true,
+      storyId,
+      message: 'Tag override removed'
+    });
+  } catch (error) {
+    console.error('Error removing tag:', error);
+    res.status(500).json({ error: 'Failed to remove tag' });
   }
 });
 
@@ -357,8 +397,7 @@ app.get('/api/sources', async (req, res) => {
     }));
     
     res.json({
-      sources: sourcesWithStatus,
-      social: socialSources
+      sources: sourcesWithStatus
     });
   } catch (error) {
     console.error('Error fetching sources:', error);
@@ -387,7 +426,6 @@ app.post('/api/refresh', async (req, res) => {
   
   // Run async, don't wait
   refreshFeeds();
-  refreshSocial();
   
   res.json({ message: 'Refresh started', status: 'pending' });
 });
@@ -397,12 +435,11 @@ app.get('/api/stats', async (req, res) => {
   try {
     const articles = await dataStore.getArticles();
     const clusters = await dataStore.getClusters();
-    const social = await dataStore.getSocial();
     
     // Count by source
     const bySource = {};
     for (const article of articles) {
-      const sourceId = article.source.id;
+      const sourceId = article.source?.id || 'unknown';
       bySource[sourceId] = (bySource[sourceId] || 0) + 1;
     }
     
@@ -413,6 +450,9 @@ app.get('/api/stats', async (req, res) => {
     }
     
     res.json({
+      articleCount: articles.length,
+      sourceCount: Object.keys(bySource).length,
+      clusterCount: clusters.length,
       articles: {
         total: articles.length,
         bySource,
@@ -422,11 +462,6 @@ app.get('/api/stats', async (req, res) => {
         total: clusters.length,
         multiSource: clusters.filter(c => c.articleCount > 1).length
       },
-      social: {
-        twitter: social.twitter?.length || 0,
-        reddit: social.reddit?.length || 0
-      },
-      search: searchIndex.getStats(),
       lastRefresh,
       isRefreshing
     });

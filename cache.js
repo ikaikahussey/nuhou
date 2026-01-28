@@ -14,7 +14,8 @@ const CACHE_KEYS = {
   CLUSTERS: 'clusters',
   SOCIAL: 'social',
   TRENDING: 'trending',
-  SOURCES_STATUS: 'sources_status'
+  SOURCES_STATUS: 'sources_status',
+  TAG_OVERRIDES: 'tag_overrides'
 };
 
 // Data directory for file-based persistence
@@ -152,6 +153,37 @@ class DataStore {
   
   async setTrending(trending) {
     this.cache.set(CACHE_KEYS.TRENDING, trending, 300);
+  }
+  
+  // Tag overrides - user-specified tags for stories
+  async getTagOverrides() {
+    let overrides = this.cache.get(CACHE_KEYS.TAG_OVERRIDES);
+    if (!overrides) {
+      overrides = await loadFromFile('tag_overrides.json');
+      if (overrides) {
+        this.cache.set(CACHE_KEYS.TAG_OVERRIDES, overrides, 86400); // 24 hours
+      }
+    }
+    return overrides || {};
+  }
+  
+  async setTagOverride(storyId, tag) {
+    const overrides = await this.getTagOverrides();
+    overrides[storyId] = {
+      tag,
+      updatedAt: new Date().toISOString()
+    };
+    this.cache.set(CACHE_KEYS.TAG_OVERRIDES, overrides, 86400);
+    await saveToFile('tag_overrides.json', overrides);
+    return overrides;
+  }
+  
+  async removeTagOverride(storyId) {
+    const overrides = await this.getTagOverrides();
+    delete overrides[storyId];
+    this.cache.set(CACHE_KEYS.TAG_OVERRIDES, overrides, 86400);
+    await saveToFile('tag_overrides.json', overrides);
+    return overrides;
   }
   
   // Stats
