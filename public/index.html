@@ -14,21 +14,21 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
     
     body {
-      font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: Helvetica, Arial, sans-serif;
       background: #fafaf8;
       color: #1a1a1a;
       line-height: 1.5;
     }
     
     .header {
-      background: linear-gradient(135deg, #2d5a27 0%, #1e3d1a 100%);
+      background: #333;
       color: white;
       padding: 1rem 2rem;
       box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     }
-    
+
     .header h1 {
-      font-family: 'Newsreader', Georgia, serif;
+      font-family: Helvetica, Arial, sans-serif;
       font-size: 2rem;
       font-weight: 700;
       letter-spacing: 0.02em;
@@ -66,7 +66,7 @@
     }
     
     .tag-btn:hover { background: rgba(255,255,255,0.25); }
-    .tag-btn.active { background: white; color: #2d5a27; font-weight: 600; }
+    .tag-btn.active { background: white; color: #333; font-weight: 600; }
     
     .search-box {
       margin-top: 1rem;
@@ -105,19 +105,19 @@
     }
     
     .lead-story h2 {
-      font-family: 'Newsreader', Georgia, serif;
+      font-family: Helvetica, Arial, sans-serif;
       font-size: 1.5rem;
       font-weight: 600;
       line-height: 1.3;
       flex: 1;
     }
-    
+
     .lead-story h2 a {
-      color: #1a1a1a;
+      color: #cc0000;
       text-decoration: none;
     }
-    
-    .lead-story h2 a:hover { color: #2d5a27; }
+
+    .lead-story h2 a:hover { color: #990000; }
     
     .story-meta {
       font-size: 0.85rem;
@@ -155,7 +155,7 @@
     }
     
     .related-item a {
-      color: #2d5a27;
+      color: #cc0000;
       text-decoration: none;
     }
     
@@ -185,8 +185,8 @@
       display: inline-flex;
       align-items: center;
       gap: 0.3rem;
-      background: #e8f0e8;
-      color: #2d5a27;
+      background: #eee;
+      color: #555;
       padding: 0.2rem 0.6rem;
       border-radius: 12px;
       font-size: 0.75rem;
@@ -198,7 +198,7 @@
     }
     
     .story-tag:hover {
-      background: #d0e0d0;
+      background: #ddd;
     }
     
     .story-tag.override {
@@ -275,7 +275,7 @@
     }
     
     .tag-editor-buttons .save-btn {
-      background: #2d5a27;
+      background: #333;
       color: white;
     }
     
@@ -383,7 +383,7 @@
     function StoryCluster({ cluster, allTags, onTagUpdate, onTagReset }) {
       const [editing, setEditing] = useState(false);
       const lead = cluster.lead || cluster.articles?.[0];
-      const related = cluster.articles?.slice(1) || [];
+      const related = cluster.related || cluster.articles?.slice(1) || [];
       
       if (!lead) return null;
       
@@ -407,7 +407,7 @@
         <article className="lead-story">
           <div className="story-header">
             <h2>
-              <a href={lead.link} target="_blank" rel="noopener noreferrer">
+              <a href={lead.url || lead.link} target="_blank" rel="noopener noreferrer">
                 {lead.title}
               </a>
             </h2>
@@ -434,12 +434,12 @@
           )}
           
           <div className="story-meta">
-            <strong>{lead.source}</strong> • {formatTime(lead.pubDate)}
+            <strong>{lead.source?.shortName || lead.source}</strong> • {formatTime(lead.publishedAt || lead.pubDate)}
           </div>
-          {lead.description && (
+          {(lead.summary || lead.description) && (
             <p className="story-description">
-              {lead.description.slice(0, 250)}
-              {lead.description.length > 250 ? '...' : ''}
+              {(lead.summary || lead.description).slice(0, 250)}
+              {(lead.summary || lead.description).length > 250 ? '...' : ''}
             </p>
           )}
           {related.length > 0 && (
@@ -448,10 +448,10 @@
               <div className="related-list">
                 {related.slice(0, 5).map((article, i) => (
                   <div key={i} className="related-item">
-                    <a href={article.link} target="_blank" rel="noopener noreferrer">
+                    <a href={article.url || article.link} target="_blank" rel="noopener noreferrer">
                       {article.title.slice(0, 80)}{article.title.length > 80 ? '...' : ''}
                     </a>
-                    <span className="related-source"> — {article.source}</span>
+                    <span className="related-source"> — {article.source?.shortName || article.source}</span>
                   </div>
                 ))}
               </div>
