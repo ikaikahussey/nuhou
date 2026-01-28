@@ -244,37 +244,6 @@ export const sources = [
   }
 ];
 
-// Social media sources for Hawaii news
-export const socialSources = {
-  twitter: {
-    accounts: [
-      { handle: 'CivilBeat', name: 'Honolulu Civil Beat', type: 'news' },
-      { handle: 'StarAdvertiser', name: 'Honolulu Star-Advertiser', type: 'news' },
-      { handle: 'HawaiiNewsNow', name: 'Hawaii News Now', type: 'news' },
-      { handle: 'ABORECIPES', name: 'ABO Recipes', type: 'community' },
-      { handle: 'GovJoshGreen', name: 'Governor Josh Green', type: 'government' },
-      { handle: 'MayorRick', name: 'Mayor Rick Blangiardi', type: 'government' },
-      { handle: 'SenSchatz', name: 'Senator Brian Schatz', type: 'government' },
-      { handle: 'SenMazieHirono', name: 'Senator Mazie Hirono', type: 'government' },
-      { handle: 'RepJillTokuda', name: 'Rep. Jill Tokuda', type: 'government' },
-      { handle: 'RepEdCase', name: 'Rep. Ed Case', type: 'government' },
-      { handle: 'ABORECIPES', name: 'ABO Recipes', type: 'community' },
-      { handle: 'HIemergency', name: 'Hawaii Emergency Management', type: 'emergency' },
-      { handle: 'NaborRecalls', name: 'Nabor Recalls Hawaii', type: 'community' }
-    ],
-    searchTerms: ['#Hawaii', '#Honolulu', '#Maui', '#BigIsland', '#Kauai', 'hawaiinews']
-  },
-  reddit: {
-    subreddits: [
-      { name: 'Hawaii', displayName: 'r/Hawaii' },
-      { name: 'Honolulu', displayName: 'r/Honolulu' },
-      { name: 'maui', displayName: 'r/Maui' },
-      { name: 'BigIsland', displayName: 'r/BigIsland' },
-      { name: 'kauai', displayName: 'r/Kauai' }
-    ]
-  }
-};
-
 // Category classification keywords
 export const categoryKeywords = {
   politics: [

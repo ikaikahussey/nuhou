@@ -9,265 +9,292 @@
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Charter:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,600;0,700;1,400&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: #f5f5f0;
+      font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #fafaf8;
       color: #1a1a1a;
       line-height: 1.5;
-      font-size: 14px;
     }
     
     .header {
-      background: #2d5016;
+      background: linear-gradient(135deg, #2d5a27 0%, #1e3d1a 100%);
       color: white;
-      padding: 0.75rem 1.5rem;
-      border-bottom: 3px solid #1a3009;
-    }
-    
-    .header-inner {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 1rem;
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     }
     
     .header h1 {
-      font-family: 'Charter', Georgia, serif;
-      font-size: 1.75rem;
+      font-family: 'Newsreader', Georgia, serif;
+      font-size: 2rem;
       font-weight: 700;
-      letter-spacing: -0.02em;
+      letter-spacing: 0.02em;
     }
     
-    .header h1 span {
-      font-weight: 400;
-      font-size: 0.9rem;
-      opacity: 0.8;
-      margin-left: 0.5rem;
+    .header-subtitle {
+      font-size: 0.85rem;
+      opacity: 0.9;
+      margin-top: 0.25rem;
     }
     
-    .nav {
+    .tags-bar {
       display: flex;
-      gap: 0.25rem;
+      gap: 0.5rem;
+      margin-top: 1rem;
       flex-wrap: wrap;
+      align-items: center;
     }
     
-    .nav button {
-      background: transparent;
-      border: none;
-      color: rgba(255,255,255,0.8);
-      padding: 0.35rem 0.7rem;
-      border-radius: 3px;
+    .tags-bar-label {
+      font-size: 0.8rem;
+      opacity: 0.8;
+      margin-right: 0.5rem;
+    }
+    
+    .tag-btn {
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: white;
+      padding: 0.3rem 0.7rem;
+      border-radius: 20px;
       cursor: pointer;
       font-size: 0.8rem;
-      font-weight: 500;
-      transition: all 0.15s;
+      transition: all 0.2s;
     }
     
-    .nav button:hover { background: rgba(255,255,255,0.15); color: white; }
-    .nav button.active { background: rgba(255,255,255,0.95); color: #2d5016; }
+    .tag-btn:hover { background: rgba(255,255,255,0.25); }
+    .tag-btn.active { background: white; color: #2d5a27; font-weight: 600; }
+    
+    .search-box {
+      margin-top: 1rem;
+    }
     
     .search-box input {
-      padding: 0.4rem 0.75rem;
+      width: 100%;
+      max-width: 400px;
+      padding: 0.6rem 1rem;
       border: none;
-      border-radius: 3px;
-      font-size: 0.85rem;
-      width: 200px;
+      border-radius: 4px;
+      font-size: 0.95rem;
     }
     
     .main {
-      max-width: 1200px;
+      max-width: 900px;
       margin: 0 auto;
-      padding: 1.5rem;
-      display: grid;
-      grid-template-columns: 1fr 280px;
-      gap: 2rem;
+      padding: 2rem;
     }
     
-    @media (max-width: 900px) {
-      .main { grid-template-columns: 1fr; padding: 1rem; }
-    }
+    .stories { display: flex; flex-direction: column; gap: 1.5rem; }
     
-    .stories { display: flex; flex-direction: column; gap: 0; }
-    
-    /* Techmeme-style story cluster */
-    .story-cluster {
+    .lead-story {
       background: white;
-      border-bottom: 1px solid #ddd;
-      padding: 1rem 1.25rem;
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      position: relative;
     }
     
-    .story-cluster:first-child {
-      border-top-left-radius: 4px;
-      border-top-right-radius: 4px;
+    .story-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.5rem;
     }
     
-    .story-cluster:last-child {
-      border-bottom-left-radius: 4px;
-      border-bottom: none;
+    .lead-story h2 {
+      font-family: 'Newsreader', Georgia, serif;
+      font-size: 1.5rem;
+      font-weight: 600;
+      line-height: 1.3;
+      flex: 1;
     }
     
-    .story-cluster.multi-source {
-      background: #fffff8;
-      border-left: 3px solid #2d5016;
-    }
-    
-    .lead-headline {
-      font-family: 'Charter', Georgia, serif;
-      font-size: 1.1rem;
-      font-weight: 700;
-      line-height: 1.35;
-      margin-bottom: 0.35rem;
-    }
-    
-    .lead-headline a {
+    .lead-story h2 a {
       color: #1a1a1a;
       text-decoration: none;
     }
     
-    .lead-headline a:hover { color: #2d5016; }
+    .lead-story h2 a:hover { color: #2d5a27; }
     
-    .lead-meta {
-      font-size: 0.8rem;
+    .story-meta {
+      font-size: 0.85rem;
       color: #666;
-      margin-bottom: 0.5rem;
-    }
-    
-    .lead-meta .source {
-      color: #2d5016;
-      font-weight: 600;
-    }
-    
-    .lead-summary {
-      color: #444;
-      font-size: 0.9rem;
-      line-height: 1.5;
       margin-bottom: 0.75rem;
     }
     
-    /* Related coverage - Techmeme style */
+    .story-description {
+      color: #444;
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+    }
+    
     .related-coverage {
-      margin-top: 0.5rem;
-      padding-left: 0.75rem;
-      border-left: 2px solid #e0e0e0;
+      border-top: 1px solid #eee;
+      padding-top: 1rem;
+    }
+    
+    .related-coverage h4 {
+      font-size: 0.8rem;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+    }
+    
+    .related-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
     }
     
     .related-item {
-      padding: 0.25rem 0;
-      font-size: 0.85rem;
-      line-height: 1.4;
+      font-size: 0.9rem;
     }
     
     .related-item a {
-      color: #2d5016;
+      color: #2d5a27;
       text-decoration: none;
-      font-weight: 500;
     }
     
     .related-item a:hover { text-decoration: underline; }
     
-    .related-item .source {
+    .related-source {
       color: #888;
-      font-weight: 400;
       font-size: 0.8rem;
-    }
-    
-    .source-count {
-      font-size: 0.75rem;
-      color: #888;
-      margin-bottom: 0.35rem;
-      text-transform: uppercase;
-      letter-spacing: 0.03em;
-    }
-    
-    .category-badge {
-      display: inline-block;
-      background: #e8f0e8;
-      color: #2d5016;
-      padding: 0.15rem 0.4rem;
-      border-radius: 2px;
-      font-size: 0.7rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.03em;
-      margin-right: 0.5rem;
-    }
-    
-    /* Sidebar */
-    .sidebar {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-    
-    .sidebar-section {
-      background: white;
-      border-radius: 4px;
-      padding: 1rem;
-      border: 1px solid #ddd;
-    }
-    
-    .sidebar-section h3 {
-      font-family: 'Charter', Georgia, serif;
-      font-size: 1rem;
-      font-weight: 700;
-      margin-bottom: 0.75rem;
-      padding-bottom: 0.5rem;
-      border-bottom: 2px solid #2d5016;
-      color: #1a1a1a;
-    }
-    
-    .social-item {
-      padding: 0.5rem 0;
-      border-bottom: 1px solid #eee;
-    }
-    
-    .social-item:last-child { border-bottom: none; }
-    
-    .social-item a {
-      color: #1a1a1a;
-      text-decoration: none;
-      font-size: 0.85rem;
-      line-height: 1.4;
-      display: block;
-    }
-    
-    .social-item a:hover { color: #2d5016; }
-    
-    .social-meta {
-      font-size: 0.7rem;
-      color: #888;
-      margin-top: 0.2rem;
     }
     
     .loading {
       text-align: center;
       padding: 3rem;
       color: #666;
-      background: white;
-      border-radius: 4px;
     }
     
     .error {
       background: #fee;
       color: #c00;
       padding: 1rem;
-      border-radius: 4px;
+      border-radius: 8px;
+      margin: 1rem 0;
     }
     
-    .stats-box {
+    /* Tag display and editing */
+    .story-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      background: #e8f0e8;
+      color: #2d5a27;
+      padding: 0.2rem 0.6rem;
+      border-radius: 12px;
       font-size: 0.75rem;
-      color: #666;
-      text-align: center;
-      padding: 0.75rem;
-      background: #f8f8f5;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-left: 0.5rem;
+      flex-shrink: 0;
+    }
+    
+    .story-tag:hover {
+      background: #d0e0d0;
+    }
+    
+    .story-tag.override {
+      background: #fff3e0;
+      color: #e65100;
+    }
+    
+    .story-tag .edit-icon {
+      font-size: 0.7rem;
+      opacity: 0.7;
+    }
+    
+    .tag-editor {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 1rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      z-index: 100;
+      min-width: 200px;
+    }
+    
+    .tag-editor h4 {
+      font-size: 0.85rem;
+      margin-bottom: 0.75rem;
+      color: #333;
+    }
+    
+    .tag-editor input {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #ddd;
       border-radius: 4px;
+      font-size: 0.9rem;
+      margin-bottom: 0.75rem;
+    }
+    
+    .tag-suggestions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+      margin-bottom: 0.75rem;
+    }
+    
+    .tag-suggestion {
+      background: #f0f0f0;
+      border: none;
+      padding: 0.2rem 0.5rem;
+      border-radius: 10px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .tag-suggestion:hover {
+      background: #e0e0e0;
+    }
+    
+    .tag-editor-buttons {
+      display: flex;
+      gap: 0.5rem;
+    }
+    
+    .tag-editor-buttons button {
+      flex: 1;
+      padding: 0.4rem;
+      border: none;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
+    
+    .tag-editor-buttons .save-btn {
+      background: #2d5a27;
+      color: white;
+    }
+    
+    .tag-editor-buttons .cancel-btn {
+      background: #f0f0f0;
+      color: #333;
+    }
+    
+    .tag-editor-buttons .reset-btn {
+      background: #fee;
+      color: #c00;
+      font-size: 0.7rem;
+    }
+    
+    .stats {
+      font-size: 0.8rem;
+      color: #888;
+      text-align: center;
+      padding: 1rem;
     }
   </style>
 </head>
@@ -275,139 +302,170 @@
   <div id="root"></div>
   
   <script type="text/babel">
-    const { useState, useEffect, useCallback } = React;
+    const { useState, useEffect, useCallback, useRef } = React;
     
     const API_BASE = '/api';
     
-    const CATEGORIES = [
-      { id: 'all', label: 'All' },
-      { id: 'politics', label: 'Politics' },
-      { id: 'business', label: 'Business' },
-      { id: 'environment', label: 'Environment' },
-      { id: 'community', label: 'Community' },
-      { id: 'emergency', label: 'Breaking' }
-    ];
-    
     function formatTime(dateString) {
-      if (!dateString) return '';
       const date = new Date(dateString);
-      if (isNaN(date.getTime())) return '';
-      
       const now = new Date();
       const diff = now - date;
-      const minutes = Math.floor(diff / (1000 * 60));
       const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor(diff / (1000 * 60));
       
-      if (minutes < 1) return 'just now';
-      if (minutes < 60) return `${minutes}m`;
-      if (hours < 24) return `${hours}h`;
-      if (hours < 48) return 'yesterday';
-      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      if (minutes < 60) return `${minutes}m ago`;
+      if (hours < 24) return `${hours}h ago`;
+      return date.toLocaleDateString();
     }
     
-    function getSourceName(source) {
-      if (!source) return 'Unknown';
-      if (typeof source === 'string') return source;
-      return source.shortName || source.name || source.id || 'Unknown';
+    function TagEditor({ storyId, currentTag, allTags, onSave, onCancel, onReset, isOverride }) {
+      const [newTag, setNewTag] = useState(currentTag);
+      const inputRef = useRef(null);
+      
+      useEffect(() => {
+        inputRef.current?.focus();
+      }, []);
+      
+      const handleSave = () => {
+        if (newTag.trim()) {
+          onSave(storyId, newTag.trim().toLowerCase());
+        }
+      };
+      
+      const handleKeyDown = (e) => {
+        if (e.key === 'Enter') handleSave();
+        if (e.key === 'Escape') onCancel();
+      };
+      
+      const suggestions = allTags.filter(t => t !== 'all' && t !== currentTag).slice(0, 6);
+      
+      return (
+        <div className="tag-editor" onClick={e => e.stopPropagation()}>
+          <h4>Change Tag</h4>
+          <input
+            ref={inputRef}
+            type="text"
+            value={newTag}
+            onChange={e => setNewTag(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="Enter tag name..."
+          />
+          {suggestions.length > 0 && (
+            <div className="tag-suggestions">
+              {suggestions.map(tag => (
+                <button
+                  key={tag}
+                  className="tag-suggestion"
+                  onClick={() => setNewTag(tag)}
+                >
+                  {tag}
+                </button>
+              ))}
+            </div>
+          )}
+          <div className="tag-editor-buttons">
+            <button className="cancel-btn" onClick={onCancel}>Cancel</button>
+            <button className="save-btn" onClick={handleSave}>Save</button>
+          </div>
+          {isOverride && (
+            <button 
+              className="reset-btn" 
+              style={{width: '100%', marginTop: '0.5rem'}}
+              onClick={() => onReset(storyId)}
+            >
+              Reset to auto-detected
+            </button>
+          )}
+        </div>
+      );
     }
     
-    function getArticleDate(article) {
-      return article.publishedAt || article.pubDate || article.date;
-    }
-    
-    function getArticleLink(article) {
-      return article.link || article.url;
-    }
-    
-    function StoryCluster({ story }) {
-      const lead = story.lead;
-      const related = story.related || [];
-      const isMultiSource = story.articleCount > 1;
+    function StoryCluster({ cluster, allTags, onTagUpdate, onTagReset }) {
+      const [editing, setEditing] = useState(false);
+      const lead = cluster.lead || cluster.articles?.[0];
+      const related = cluster.articles?.slice(1) || [];
       
       if (!lead) return null;
       
+      const handleTagClick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setEditing(true);
+      };
+      
+      const handleSave = async (storyId, newTag) => {
+        await onTagUpdate(storyId, newTag);
+        setEditing(false);
+      };
+      
+      const handleReset = async (storyId) => {
+        await onTagReset(storyId);
+        setEditing(false);
+      };
+      
       return (
-        <article className={`story-cluster ${isMultiSource ? 'multi-source' : ''}`}>
-          {lead.category && (
-            <span className="category-badge">{lead.category}</span>
-          )}
-          
-          <h2 className="lead-headline">
-            <a href={getArticleLink(lead)} target="_blank" rel="noopener noreferrer">
-              {lead.title}
-            </a>
-          </h2>
-          
-          <div className="lead-meta">
-            <span className="source">{getSourceName(lead.source)}</span>
-            {' · '}
-            <span>{formatTime(getArticleDate(lead))}</span>
+        <article className="lead-story">
+          <div className="story-header">
+            <h2>
+              <a href={lead.link} target="_blank" rel="noopener noreferrer">
+                {lead.title}
+              </a>
+            </h2>
+            <span 
+              className={`story-tag ${cluster.tagOverride ? 'override' : ''}`}
+              onClick={handleTagClick}
+              title="Click to change tag"
+            >
+              {cluster.tag || 'general'}
+              <span className="edit-icon">✎</span>
+            </span>
           </div>
           
-          {lead.summary && (
-            <p className="lead-summary">
-              {lead.summary.length > 200 ? lead.summary.slice(0, 200) + '...' : lead.summary}
-            </p>
+          {editing && (
+            <TagEditor
+              storyId={cluster.id}
+              currentTag={cluster.tag || 'general'}
+              allTags={allTags}
+              onSave={handleSave}
+              onCancel={() => setEditing(false)}
+              onReset={handleReset}
+              isOverride={cluster.tagOverride}
+            />
           )}
           
+          <div className="story-meta">
+            <strong>{lead.source}</strong> • {formatTime(lead.pubDate)}
+          </div>
+          {lead.description && (
+            <p className="story-description">
+              {lead.description.slice(0, 250)}
+              {lead.description.length > 250 ? '...' : ''}
+            </p>
+          )}
           {related.length > 0 && (
             <div className="related-coverage">
-              <div className="source-count">{related.length} more source{related.length > 1 ? 's' : ''}</div>
-              {related.slice(0, 5).map((article, i) => (
-                <div key={i} className="related-item">
-                  <a href={getArticleLink(article)} target="_blank" rel="noopener noreferrer">
-                    {article.title.length > 70 ? article.title.slice(0, 70) + '...' : article.title}
-                  </a>
-                  {' '}
-                  <span className="source">— {getSourceName(article.source)}</span>
-                </div>
-              ))}
-              {related.length > 5 && (
-                <div className="related-item" style={{color: '#888', fontStyle: 'italic'}}>
-                  +{related.length - 5} more...
-                </div>
-              )}
+              <h4>Also covering ({related.length})</h4>
+              <div className="related-list">
+                {related.slice(0, 5).map((article, i) => (
+                  <div key={i} className="related-item">
+                    <a href={article.link} target="_blank" rel="noopener noreferrer">
+                      {article.title.slice(0, 80)}{article.title.length > 80 ? '...' : ''}
+                    </a>
+                    <span className="related-source"> — {article.source}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </article>
       );
     }
     
-    function SocialSidebar({ social }) {
-      const posts = social?.reddit || social || [];
-      
-      if (!posts || posts.length === 0) {
-        return (
-          <div className="sidebar-section">
-            <h3>Discussion</h3>
-            <p style={{color: '#888', fontSize: '0.85rem'}}>Loading...</p>
-          </div>
-        );
-      }
-      
-      return (
-        <div className="sidebar-section">
-          <h3>r/Hawaii Discussion</h3>
-          {posts.slice(0, 8).map((item, i) => (
-            <div key={i} className="social-item">
-              <a href={item.link || item.url} target="_blank" rel="noopener noreferrer">
-                {item.title}
-              </a>
-              <div className="social-meta">
-                {item.score} pts · {item.numComments} comments
-              </div>
-            </div>
-          ))}
-        </div>
-      );
-    }
-    
     function App() {
       const [stories, setStories] = useState([]);
-      const [social, setSocial] = useState(null);
-      const [category, setCategory] = useState('all');
+      const [tags, setTags] = useState(['all']);
+      const [selectedTag, setSelectedTag] = useState('all');
       const [search, setSearch] = useState('');
-      const [searchInput, setSearchInput] = useState('');
       const [loading, setLoading] = useState(true);
       const [error, setError] = useState(null);
       const [stats, setStats] = useState(null);
@@ -417,41 +475,23 @@
           setLoading(true);
           setError(null);
           
-          let url;
-          if (search) {
-            url = `${API_BASE}/search?q=${encodeURIComponent(search)}`;
-            if (category !== 'all') url += `&category=${category}`;
-          } else {
-            url = `${API_BASE}/stories`;
-            if (category !== 'all') url += `?category=${category}`;
-          }
+          let url = `${API_BASE}/stories`;
+          const params = new URLSearchParams();
+          if (selectedTag !== 'all') params.set('tag', selectedTag);
+          if (search) params.set('search', search);
+          if (params.toString()) url += `?${params}`;
           
           const res = await fetch(url);
           if (!res.ok) throw new Error('Failed to fetch stories');
           const data = await res.json();
-          
-          // Handle both /stories and /search response formats
-          const storyList = data.stories || data.results || [];
-          setStories(storyList);
+          setStories(data.stories || []);
+          if (data.tags) setTags(data.tags);
         } catch (err) {
-          console.error('Fetch error:', err);
           setError(err.message);
         } finally {
           setLoading(false);
         }
-      }, [category, search]);
-      
-      const fetchSocial = useCallback(async () => {
-        try {
-          const res = await fetch(`${API_BASE}/social`);
-          if (res.ok) {
-            const data = await res.json();
-            setSocial(data);
-          }
-        } catch (err) {
-          console.error('Social fetch error:', err);
-        }
-      }, []);
+      }, [selectedTag, search]);
       
       const fetchStats = useCallback(async () => {
         try {
@@ -461,95 +501,108 @@
             setStats(data);
           }
         } catch (err) {
-          console.error('Stats fetch error:', err);
+          console.error('Failed to fetch stats:', err);
         }
       }, []);
+      
+      const updateTag = async (storyId, newTag) => {
+        try {
+          const res = await fetch(`${API_BASE}/stories/${storyId}/tag`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ tag: newTag })
+          });
+          
+          if (res.ok) {
+            fetchStories(); // Refresh to show updated tags
+          }
+        } catch (err) {
+          console.error('Failed to update tag:', err);
+        }
+      };
+      
+      const resetTag = async (storyId) => {
+        try {
+          const res = await fetch(`${API_BASE}/stories/${storyId}/tag`, {
+            method: 'DELETE'
+          });
+          
+          if (res.ok) {
+            fetchStories();
+          }
+        } catch (err) {
+          console.error('Failed to reset tag:', err);
+        }
+      };
       
       useEffect(() => {
         fetchStories();
       }, [fetchStories]);
       
       useEffect(() => {
-        fetchSocial();
         fetchStats();
-        const interval = setInterval(() => {
-          fetchStories();
-          fetchSocial();
-        }, 60000);
+        const interval = setInterval(fetchStats, 60000);
         return () => clearInterval(interval);
-      }, [fetchSocial, fetchStats]);
+      }, [fetchStats]);
       
       const handleSearch = (e) => {
         e.preventDefault();
-        setSearch(searchInput);
+        fetchStories();
       };
-      
-      const multiSourceCount = stories.filter(s => s.articleCount > 1).length;
       
       return (
         <div>
           <header className="header">
-            <div className="header-inner">
-              <h1>
-                Nūhou
-                <span>Hawaii News</span>
-              </h1>
-              
-              <nav className="nav">
-                {CATEGORIES.map(cat => (
-                  <button
-                    key={cat.id}
-                    className={category === cat.id ? 'active' : ''}
-                    onClick={() => { setCategory(cat.id); setSearch(''); setSearchInput(''); }}
-                  >
-                    {cat.label}
-                  </button>
-                ))}
-              </nav>
-              
-              <form className="search-box" onSubmit={handleSearch}>
-                <input
-                  type="text"
-                  placeholder="Search..."
-                  value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value)}
-                />
-              </form>
+            <h1>Nūhou</h1>
+            <div className="header-subtitle">Hawaii News Aggregator</div>
+            
+            <div className="tags-bar">
+              <span className="tags-bar-label">Filter by tag:</span>
+              {tags.map(tag => (
+                <button
+                  key={tag}
+                  className={`tag-btn ${selectedTag === tag ? 'active' : ''}`}
+                  onClick={() => setSelectedTag(tag)}
+                >
+                  {tag}
+                </button>
+              ))}
             </div>
+            
+            <form className="search-box" onSubmit={handleSearch}>
+              <input
+                type="text"
+                placeholder="Search Hawaii news..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </form>
           </header>
           
           <main className="main">
             <div className="stories">
-              {loading && <div className="loading">Loading Hawaii news...</div>}
-              {error && <div className="error">Error: {error}</div>}
+              {loading && <div className="loading">Loading stories...</div>}
+              {error && <div className="error">{error}</div>}
               {!loading && !error && stories.length === 0 && (
-                <div className="loading">No stories found. Try a different search or category.</div>
+                <div className="loading">No stories found. Feeds are being fetched...</div>
               )}
-              {stories.map((story, i) => (
-                <StoryCluster key={story.id || i} story={story} />
+              {stories.map((cluster, i) => (
+                <StoryCluster 
+                  key={cluster.id || i} 
+                  cluster={cluster} 
+                  allTags={tags}
+                  onTagUpdate={updateTag}
+                  onTagReset={resetTag}
+                />
               ))}
+              {stats && (
+                <div className="stats">
+                  {stats.articleCount || 0} articles from {stats.sourceCount || 0} sources
+                  <br />
+                  Last updated: {stats.lastRefresh ? formatTime(stats.lastRefresh) : 'Never'}
+                </div>
+              )}
             </div>
-            
-            <aside className="sidebar">
-              <div className="stats-box">
-                {stats ? (
-                  <>
-                    <strong>{stats.articles?.total || 0}</strong> articles from{' '}
-                    <strong>{Object.keys(stats.articles?.bySource || {}).length}</strong> sources
-                    <br />
-                    <strong>{stats.clusters?.multiSource || multiSourceCount}</strong> multi-source stories
-                    <br />
-                    <span style={{fontSize: '0.7rem', color: '#999'}}>
-                      Updated {formatTime(stats.lastRefresh)}
-                    </span>
-                  </>
-                ) : (
-                  'Loading stats...'
-                )}
-              </div>
-              
-              <SocialSidebar social={social} />
-            </aside>
           </main>
         </div>
       );

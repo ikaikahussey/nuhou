@@ -12,8 +12,6 @@ const cache = new NodeCache({
 const CACHE_KEYS = {
   ARTICLES: 'articles',
   CLUSTERS: 'clusters',
-  SOCIAL: 'social',
-  TRENDING: 'trending',
   SOURCES_STATUS: 'sources_status',
   TAG_OVERRIDES: 'tag_overrides'
 };
@@ -73,11 +71,6 @@ class DataStore {
       console.log(`Loaded ${clusters.length} clusters from file cache`);
     }
     
-    const social = await loadFromFile('social.json');
-    if (social) {
-      this.cache.set(CACHE_KEYS.SOCIAL, social, 300);
-    }
-    
     this.initialized = true;
   }
   
@@ -115,23 +108,6 @@ class DataStore {
     await saveToFile('clusters.json', clusters);
   }
   
-  // Social content
-  async getSocial() {
-    let social = this.cache.get(CACHE_KEYS.SOCIAL);
-    if (!social) {
-      social = await loadFromFile('social.json');
-      if (social) {
-        this.cache.set(CACHE_KEYS.SOCIAL, social, 300);
-      }
-    }
-    return social || { twitter: [], reddit: [] };
-  }
-  
-  async setSocial(social) {
-    this.cache.set(CACHE_KEYS.SOCIAL, social, 300);
-    await saveToFile('social.json', social);
-  }
-  
   // Source status tracking
   async getSourceStatus() {
     return this.cache.get(CACHE_KEYS.SOURCES_STATUS) || {};
@@ -144,15 +120,6 @@ class DataStore {
       lastUpdated: new Date().toISOString()
     };
     this.cache.set(CACHE_KEYS.SOURCES_STATUS, current, 3600);
-  }
-  
-  // Trending topics
-  async getTrending() {
-    return this.cache.get(CACHE_KEYS.TRENDING) || [];
-  }
-  
-  async setTrending(trending) {
-    this.cache.set(CACHE_KEYS.TRENDING, trending, 300);
   }
   
   // Tag overrides - user-specified tags for stories

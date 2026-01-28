@@ -1,7 +1,7 @@
 {
   "name": "nuhou",
   "version": "1.0.0",
-  "description": "Hawaii News Aggregator - Techmeme-style news clustering",
+  "description": "Hawaii News Aggregator",
   "type": "module",
   "main": "index.js",
   "scripts": {
